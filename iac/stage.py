@@ -10,4 +10,4 @@ class PipelineAppStage(cdk.Stage):
 
         bucketsStack = BucketsStack(self, "BucketsStack")
 
-        catalogStack = CatalogStack(self, "CatalogStack")
+        catalogStack = CatalogStack(self, "CatalogStack", buckets_stack=bucketsStack)

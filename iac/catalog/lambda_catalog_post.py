@@ -65,5 +65,5 @@ class LambdaCatalogPost:
             logs_policy_statement, lambda_upload_s3_policy_statement
         )
 
-        role.add_to_policy(inline_policy)
+        role.attach_inline_policy(inline_policy)
         return role
