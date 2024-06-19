@@ -1,0 +1,1 @@
+# catalog-administrator-lambda-dynamodb
