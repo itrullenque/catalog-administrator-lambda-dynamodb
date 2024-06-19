@@ -29,7 +29,7 @@ class LambdaCatalogPost:
             runtime=aws_lambda.Runtime.PYTHON_3_11,
             log_retention=aws_logs.RetentionDays.ONE_WEEK,
             timeout=Duration.seconds(60),
-            code=aws_lambda.Code.from_asset(path="iac\\assets\\lambda_catalog_post"),
+            code=aws_lambda.Code.from_asset(path="iac/assets/lambda_catalog_post"),
             role=self.role(),
             memory_size=1024,
         )
