@@ -4,15 +4,15 @@ from aws_cdk.pipelines import CodePipeline, CodePipelineSource, ShellStep
 from .stage import PipelineAppStage
 
 
-class CodePipelineDemo(cdk.Stack):
+class CodeCatalogPipeline(cdk.Stack):
 
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
         pipeline = CodePipeline(
             self,
-            "PipelineDemo",
-            pipeline_name="PipelineDemo",
+            "CatalogPipeline",
+            pipeline_name="CatalogPipeline",
             synth=ShellStep(
                 "Synth",
                 input=CodePipelineSource.git_hub(
