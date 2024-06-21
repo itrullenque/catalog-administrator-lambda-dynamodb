@@ -2,6 +2,7 @@ import aws_cdk as cdk
 from constructs import Construct
 from iac.buckets.buckets_stack import BucketsStack
 from iac.catalog.catalog_stack import CatalogStack
+from iac.tables.tables_stack import TableStack
 
 
 class PipelineAppStage(cdk.Stage):
@@ -10,4 +11,8 @@ class PipelineAppStage(cdk.Stage):
 
         bucketsStack = BucketsStack(self, "BucketsStack")
 
-        catalogStack = CatalogStack(self, "CatalogStack", buckets_stack=bucketsStack)
+        tableStack = TableStack(self, "TableStack")
+
+        catalogStack = CatalogStack(
+            self, "CatalogStack", buckets_stack=bucketsStack, table_stack=tableStack
+        )

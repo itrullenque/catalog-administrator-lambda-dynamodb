@@ -3,6 +3,7 @@ from aws_cdk import Stack
 from aws_cdk.aws_logs import LogGroup
 from aws_cdk import Duration
 from iac.buckets.knowledge_catalog_bucket import KnowledgeCatalogBucket
+from iac.tables.catalog_table import CatalogTable
 
 
 class LambdaCatalogPost:
@@ -10,14 +11,16 @@ class LambdaCatalogPost:
         self,
         stack: Stack,
         knowledge_catalog_bucket: KnowledgeCatalogBucket,
+        catalog_table: CatalogTable,
     ) -> None:
 
-        # initialize the stack with the parameters passed to the constructor
+        # initialize the class with the parameters passed to the constructor
         self.stack = stack
         self.id = "lambda_catalog_post_lambda"
         self.name = "lambda_catalog_post"
         self.knowledge_catalog_bucket = knowledge_catalog_bucket.bucket
         self.knowledge_catalog_bucket_arn = knowledge_catalog_bucket.bucket.bucket_arn
+        self.catalog_table_name = catalog_table.table_name
         self.function = self.__create_function()
 
     def __create_function(self):
@@ -59,10 +62,21 @@ class LambdaCatalogPost:
             self.knowledge_catalog_bucket_arn + "/*"
         )
 
+        # inline policy for the role to allow in catalog DynamoDB table
+        lambda_dynamodb_policy_statement = aws_iam.PolicyStatement()
+        lambda_dynamodb_policy_statement.effect = aws_iam.Effect.ALLOW
+        lambda_dynamodb_policy_statement.add_actions("dynamodb:PutItem")
+
+        lambda_dynamodb_policy_statement.add_resources(
+            f"arn:aws:dynamodb:*:*:table/{self.catalog_table_name}"
+        )
+
         # add the statements to the inline policy
         inline_policy = aws_iam.Policy(self.stack, "inline_policy_" + self.name)
         inline_policy.add_statements(
-            logs_policy_statement, lambda_upload_s3_policy_statement
+            logs_policy_statement,
+            lambda_upload_s3_policy_statement,
+            lambda_dynamodb_policy_statement,
         )
 
         role.attach_inline_policy(inline_policy)
