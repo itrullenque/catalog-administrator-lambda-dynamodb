@@ -8,8 +8,8 @@ class ApiGatewayInvokeRoleLambda:
 
         # Initialize class variables
         self.stack = stack
-        self.id = "apigateway_invoke_lambda_role"
-        self.name = "apigateway_invoke_lambda_role"
+        self.id = "apigateway_lambda_invoke_role"
+        self.name = "apigateway_lambda_invoke_role"
         self.role = self.__create_role()
 
     def __create_role(self):
