@@ -15,8 +15,8 @@ class ApiGatewayInvokeRoleLambda:
     def __create_role(self):
         role = aws_iam.Role(
             self.stack,
-            "role_" + self.id,
-            role_name="role_" + self.name,
+            self.id,
+            role_name=self.name,
             assumed_by=aws_iam.ServicePrincipal("apigateway.amazonaws.com"),
         )
 
