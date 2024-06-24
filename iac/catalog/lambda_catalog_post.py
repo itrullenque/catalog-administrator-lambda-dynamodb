@@ -28,7 +28,7 @@ class LambdaCatalogPost:
             self.stack,
             self.id,
             function_name=self.name,
-            handler="lambda_hamdler.lambda_handler",
+            handler="lambda_handler.lambda_handler",
             runtime=aws_lambda.Runtime.PYTHON_3_11,
             log_retention=aws_logs.RetentionDays.ONE_WEEK,
             timeout=Duration.seconds(60),
