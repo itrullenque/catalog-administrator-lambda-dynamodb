@@ -34,13 +34,6 @@ class CatalogApiGateway:
             disable_execute_api_endpoint=False,
         )
 
-        aws_apigateway.Stage(
-            self.stack,
-            id="catalog" + "_stage",
-            deployment=rest_api.latest_deployment,
-            stage_name="catalog",
-        )
-
         # create the resources
         catalog_resource = rest_api.root.add_resource("catalog")
 
