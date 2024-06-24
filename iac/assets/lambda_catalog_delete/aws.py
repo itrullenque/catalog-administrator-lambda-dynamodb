@@ -26,17 +26,23 @@ class DynamoDb:
 
             # response = table.get_item(Key=key, ConsistentRead=True)
             response = table.delete_item(Key=key, ReturnValues="ALL_OLD")
+            if "Attributes" in response:
+                deleted_item = response["Attributes"]
+                return {
+                    "statusCode": 200,
+                    "body": json.dumps(
+                        {
+                            "message": "Item deleted successfully",
+                            "deletedItem": deleted_item,
+                        }
+                    ),
+                }
 
-            if "Item" not in response:
-                response["code"] = "NOT_FOUND"
-                response["error_technical"] = "item not found"
-                return response
-
-            response["item"] = json.loads(
-                json.dumps(response["Item"], indent=4, cls=DecimalEncoder)
-            )
-            response["code"] = "OK"
-            return response
+            else:
+                return {
+                    "statusCode": 400,
+                    "body": json.dumps({"message": "Item not found"}),
+                }
 
         except Exception as e:
             exc_type, exc_obj, exc_tb = sys.exc_info()

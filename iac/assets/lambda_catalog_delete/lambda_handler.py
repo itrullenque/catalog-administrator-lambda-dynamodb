@@ -36,7 +36,15 @@ def lambda_handler(event, context):
         dynamo_response = DynamoDb.object_delete(TABLE_NAME, key, resource_dynamo_db)
 
         if dynamo_response["code"] == "OK":
-            return {"statusCode": 200, "body": json.dumps(dynamo_response["item"])}
+            return {
+                "statusCode": 200,
+                "body": json.dumps(
+                    {
+                        "message": "Item deleted successfully",
+                        "deletedItem": dynamo_response["item"],
+                    }
+                ),
+            }
 
         if dynamo_response["code"] == "NOK":
             return {
