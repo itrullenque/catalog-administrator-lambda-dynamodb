@@ -35,7 +35,7 @@ def lambda_handler(event, context):
 
         # save in dynamo
         dynamo_response = DynamoDb.object_post(
-            resource_dynamo_db, TABLE_NAME, catalog_item
+            TABLE_NAME, catalog_item, resource_dynamo_db
         )
 
         if dynamo_response["code"] == "NOK":

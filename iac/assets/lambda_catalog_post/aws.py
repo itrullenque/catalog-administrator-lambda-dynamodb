@@ -38,14 +38,21 @@ class DynamoDb:
             response["code"] = "OK"
             return response
 
+        except ClientError as e:
+            if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
+                return {"code": "CEX", "error_technical": "Item already exists"}
+            else:
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                err = "file: {} - line:{} - error: {} - {}".format(
+                    fname, exc_tb.tb_lineno, str(e), exc_type
+                )
+                return {"code": "NOK", "error_technical": err}
+
         except Exception as e:
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
             err = "file: {} - line:{} - error: {} - {}".format(
-                fname, exc_tb.tb_lineno, exc_obj, exc_type
+                fname, exc_tb.tb_lineno, str(e), exc_type
             )
-
-            response["code"] = "NOK"
-            response["error_technical"] = err
-
-        return response
+            return {"code": "NOK", "error_technical": err}
