@@ -29,20 +29,18 @@ class DynamoDb:
             if "Attributes" in response:
                 deleted_item = response["Attributes"]
                 return {
-                    "statusCode": 200,
-                    "body": json.dumps(
+                    "code": "OK",
+                    "item": json.dumps(
                         {
                             "message": "Item deleted successfully",
                             "deletedItem": deleted_item,
-                        }
+                        },
+                        cls=DecimalEncoder,
                     ),
                 }
 
             else:
-                return {
-                    "statusCode": 400,
-                    "body": json.dumps({"message": "Item not found"}),
-                }
+                return {"code": "NOT_FOUND", "error_technical": "Item not found"}
 
         except Exception as e:
             exc_type, exc_obj, exc_tb = sys.exc_info()
