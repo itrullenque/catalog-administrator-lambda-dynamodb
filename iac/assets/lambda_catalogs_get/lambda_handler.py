@@ -24,11 +24,17 @@ def lambda_handler(event, context):
         dynamo_response = DynamoDb.object_scan(TABLE_NAME, resource_dynamo_db)
 
         if dynamo_response["code"] == "OK":
-            return {"statusCode": 200, "body": json.dumps(dynamo_response["item"])}
+            return {"statusCode": 200, "body": json.dumps(dynamo_response["Items"])}
 
         if dynamo_response["code"] == "NOK":
             return {
                 "statusCode": 500,
+                "body": json.dumps(f"Error: {dynamo_response['error_technical']}"),
+            }
+
+        if dynamo_response["code"] == "NOT_FOUND":
+            return {
+                "statusCode": 400,
                 "body": json.dumps(f"Error: {dynamo_response['error_technical']}"),
             }
 

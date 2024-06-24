@@ -26,13 +26,14 @@ class DynamoDb:
 
             response = table.scan(ConsistentRead=True)
 
-            if "Item" not in response:
+            items = response.get("Items", [])
+            if not items:
                 response["code"] = "NOT_FOUND"
-                response["error_technical"] = "item not found"
+                response["error_technical"] = "items not found"
                 return response
 
-            response["item"] = json.loads(
-                json.dumps(response["Item"], indent=4, cls=DecimalEncoder)
+            response["Items"] = json.loads(
+                json.dumps(response["Items"], indent=4, cls=DecimalEncoder)
             )
             response["code"] = "OK"
             return response
