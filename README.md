@@ -2,6 +2,10 @@
 
 This document outlines the usage of the Catalog API endpoints.
 
+# config file
+
+In the config.py file you will be able to modify your account and reagion of your aws account
+
 ## Base URL
 
 https://[your-api-gateway-id].execute-api.[your-region].amazonaws.com/dev

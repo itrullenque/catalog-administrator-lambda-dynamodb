@@ -2,6 +2,7 @@ import aws_cdk as cdk
 from constructs import Construct
 from aws_cdk.pipelines import CodePipeline, CodePipelineSource, ShellStep
 from .stage import PipelineAppStage
+from config import CDK_DEFAULT_ACCOUNT, CDK_DEFAULT_REGION
 
 
 class CodeCatalogPipeline(cdk.Stack):
@@ -30,6 +31,8 @@ class CodeCatalogPipeline(cdk.Stack):
             PipelineAppStage(
                 self,
                 "dev",
-                env=cdk.Environment(account="051556718043", region="us-east-1"),
+                env=cdk.Environment(
+                    account=CDK_DEFAULT_ACCOUNT, region=CDK_DEFAULT_REGION
+                ),
             )
         )
