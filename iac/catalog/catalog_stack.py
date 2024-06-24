@@ -5,6 +5,7 @@ from iac.tables.tables_stack import TableStack
 from iac._general.general_stack import GeneralStack
 from .catalog_api_gateway import CatalogApiGateway
 from .lambda_catalog_post import LambdaCatalogPost
+from .lambda_catalog_item_get import LambdaCatalogItemGet
 
 
 class CatalogStack(Stack):
@@ -26,9 +27,15 @@ class CatalogStack(Stack):
             catalog_table=table_stack.catalog_table,
         )
 
+        self.lambda_catalog_item_get = LambdaCatalogItemGet(
+            self,
+            catalog_table=table_stack.catalog_table,
+        )
+
         # apis
         self.catalog_api_gateway = CatalogApiGateway(
             self,
             apigateway_invoke_lambda_role=general_stack.api_gateway_role,
             lambda_catalog_post=self.lambda_catalog_post,
+            lambda_catalog_item_get=self.lambda_catalog_item_get,
         )

@@ -2,24 +2,20 @@ from aws_cdk import aws_iam, aws_lambda, aws_logs
 from aws_cdk import Stack
 from aws_cdk.aws_logs import LogGroup
 from aws_cdk import Duration
-from iac.buckets.knowledge_catalog_bucket import KnowledgeCatalogBucket
 from iac.tables.catalog_table import CatalogTable
 
 
-class LambdaCatalogPost:
+class LambdaCatalogItemGet:
     def __init__(
         self,
         stack: Stack,
-        knowledge_catalog_bucket: KnowledgeCatalogBucket,
         catalog_table: CatalogTable,
     ) -> None:
 
         # initialize the class with the parameters passed to the constructor
         self.stack = stack
-        self.id = "lambda_catalog_post_lambda"
-        self.name = "lambda_catalog_post"
-        self.knowledge_catalog_bucket = knowledge_catalog_bucket.bucket
-        self.knowledge_catalog_bucket_arn = knowledge_catalog_bucket.bucket.bucket_arn
+        self.id = "lambda_catalog_item_get_lambda"
+        self.name = "lambda_catalog_item_get"
         self.catalog_table_name = catalog_table.table_name
         self.function = self.__create_function()
 
@@ -32,7 +28,7 @@ class LambdaCatalogPost:
             runtime=aws_lambda.Runtime.PYTHON_3_11,
             log_retention=aws_logs.RetentionDays.ONE_WEEK,
             timeout=Duration.seconds(60),
-            code=aws_lambda.Code.from_asset(path="iac/assets/lambda_catalog_post"),
+            code=aws_lambda.Code.from_asset(path="iac/assets/lambda_catalog_item_get"),
             role=self.role(),
             memory_size=1024,
         )
@@ -53,19 +49,10 @@ class LambdaCatalogPost:
         )
         logs_policy_statement.add_resources("*")
 
-        # inline policy for the role to allow the lambda function to upload objects to the s3 bucket
-        lambda_upload_s3_policy_statement = aws_iam.PolicyStatement()
-        lambda_upload_s3_policy_statement.effect = aws_iam.Effect.ALLOW
-        lambda_upload_s3_policy_statement.add_actions("s3:PutObject", "s3:GetObject")
-
-        lambda_upload_s3_policy_statement.add_resources(
-            self.knowledge_catalog_bucket_arn + "/*"
-        )
-
         # inline policy for the role to allow in catalog DynamoDB table
         lambda_dynamodb_policy_statement = aws_iam.PolicyStatement()
         lambda_dynamodb_policy_statement.effect = aws_iam.Effect.ALLOW
-        lambda_dynamodb_policy_statement.add_actions("dynamodb:PutItem")
+        lambda_dynamodb_policy_statement.add_actions("dynamodb:GetItem")
 
         lambda_dynamodb_policy_statement.add_resources(
             f"arn:aws:dynamodb:*:*:table/{self.catalog_table_name}"
@@ -75,7 +62,6 @@ class LambdaCatalogPost:
         inline_policy = aws_iam.Policy(self.stack, "inline_policy_" + self.name)
         inline_policy.add_statements(
             logs_policy_statement,
-            lambda_upload_s3_policy_statement,
             lambda_dynamodb_policy_statement,
         )
 
