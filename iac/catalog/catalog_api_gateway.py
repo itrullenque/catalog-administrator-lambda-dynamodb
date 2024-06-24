@@ -46,7 +46,7 @@ class CatalogApiGateway:
         # create the resources
         catalog_resource = rest_api.root.add_resource("catalog")
         catalogs_resource = rest_api.root.add_resource("catalogs")
-        catalog_query_resource = catalog_resource.add_resource("catalogquery")
+        catalog_query_resource = rest_api.root.add_resource("catalogquery")
 
         # create the integrations
         lambda_catalog_post_integration = aws_apigateway.LambdaIntegration(
