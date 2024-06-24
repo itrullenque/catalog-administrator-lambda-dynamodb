@@ -30,8 +30,8 @@ def lambda_handler(event, context):
 
         # create the body
         catalog_item = {
-            "catalog_id": catalog_id,
-            "course_id": course_id,
+            "catalog_id": catalog_id.lower(),
+            "course_id": course_id.lower(),
             "creation_date": int(time.time()),
             "academic_year": academic_year,
         }
