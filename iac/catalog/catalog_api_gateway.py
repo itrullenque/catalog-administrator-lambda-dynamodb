@@ -3,6 +3,7 @@ from aws_cdk import Stack
 from iac._general.api_gateway_role import ApiGatewayInvokeRoleLambda
 from .lambda_catalog_post import LambdaCatalogPost
 from .lambda_catalog_item_get import LambdaCatalogItemGet
+from .lambda_catalog_delete import LambdaCatalogDelete
 
 
 class CatalogApiGateway:
@@ -12,6 +13,7 @@ class CatalogApiGateway:
         apigateway_invoke_lambda_role: ApiGatewayInvokeRoleLambda,
         lambda_catalog_post: LambdaCatalogPost,
         lambda_catalog_item_get: LambdaCatalogItemGet,
+        lambda_catalog_delete: LambdaCatalogDelete,
     ) -> None:
 
         # Initialize class variables
@@ -22,6 +24,7 @@ class CatalogApiGateway:
         self.apigateway_invoke_lambda_role = apigateway_invoke_lambda_role.role
         self.lambda_catalog_post = lambda_catalog_post.function
         self.lambda_catalog_item_get = lambda_catalog_item_get.function
+        self.lamda_catalog_delete = lambda_catalog_delete.function
         self.api = self.__create_api_gateway()
 
     def __create_api_gateway(self):
@@ -50,6 +53,12 @@ class CatalogApiGateway:
             credentials_role=self.apigateway_invoke_lambda_role,
         )
 
+        lambda_catalog_delete_integration = aws_apigateway.LambdaIntegration(
+            handler=self.lamda_catalog_delete,
+            proxy=True,
+            credentials_role=self.apigateway_invoke_lambda_role,
+        )
+
         # create the methods
         catalog_resource.add_method(
             "POST", lambda_catalog_post_integration, api_key_required=False
@@ -57,6 +66,10 @@ class CatalogApiGateway:
 
         catalog_resource.add_method(
             "GET", lambda_catalog_item_get_integration, api_key_required=False
+        )
+
+        catalog_resource.add_method(
+            "DELETE", lambda_catalog_delete_integration, api_key_required=False
         )
 
         catalog_resource.add_cors_preflight(
