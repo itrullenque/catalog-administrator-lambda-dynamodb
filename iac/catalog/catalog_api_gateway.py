@@ -4,6 +4,7 @@ from iac._general.api_gateway_role import ApiGatewayInvokeRoleLambda
 from .lambda_catalog_post import LambdaCatalogPost
 from .lambda_catalog_item_get import LambdaCatalogItemGet
 from .lambda_catalog_delete import LambdaCatalogDelete
+from .lambda_catalogs_get import LambdaCatalogsGet
 
 
 class CatalogApiGateway:
@@ -14,6 +15,7 @@ class CatalogApiGateway:
         lambda_catalog_post: LambdaCatalogPost,
         lambda_catalog_item_get: LambdaCatalogItemGet,
         lambda_catalog_delete: LambdaCatalogDelete,
+        lambda_catalogs_get: LambdaCatalogsGet,
     ) -> None:
 
         # Initialize class variables
@@ -25,6 +27,7 @@ class CatalogApiGateway:
         self.lambda_catalog_post = lambda_catalog_post.function
         self.lambda_catalog_item_get = lambda_catalog_item_get.function
         self.lamda_catalog_delete = lambda_catalog_delete.function
+        self.lambda_catalogs_get = lambda_catalogs_get.function
         self.api = self.__create_api_gateway()
 
     def __create_api_gateway(self):
@@ -39,6 +42,7 @@ class CatalogApiGateway:
 
         # create the resources
         catalog_resource = rest_api.root.add_resource("catalog")
+        catalogs_resource = rest_api.root.add_resource("catalogs")
 
         # create the integrations
         lambda_catalog_post_integration = aws_apigateway.LambdaIntegration(
@@ -59,6 +63,12 @@ class CatalogApiGateway:
             credentials_role=self.apigateway_invoke_lambda_role,
         )
 
+        lambda_catalogs_get_integration = aws_apigateway.LambdaIntegration(
+            handler=self.lambda_catalogs_get,
+            proxy=True,
+            credentials_role=self.apigateway_invoke_lambda_role,
+        )
+
         # create the methods
         catalog_resource.add_method(
             "POST", lambda_catalog_post_integration, api_key_required=False
@@ -70,6 +80,18 @@ class CatalogApiGateway:
 
         catalog_resource.add_method(
             "DELETE", lambda_catalog_delete_integration, api_key_required=False
+        )
+
+        catalogs_resource.add_method(
+            "GET", lambda_catalogs_get_integration, api_key_required=False
+        )
+
+        catalogs_resource.add_cors_preflight(
+            allow_origins=["*"],
+            allow_headers=[
+                "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token"
+            ],
+            allow_methods=["POST", "GET", "PUT", "OPTIONS"],
         )
 
         catalog_resource.add_cors_preflight(

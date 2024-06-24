@@ -7,6 +7,7 @@ from .catalog_api_gateway import CatalogApiGateway
 from .lambda_catalog_post import LambdaCatalogPost
 from .lambda_catalog_item_get import LambdaCatalogItemGet
 from .lambda_catalog_delete import LambdaCatalogDelete
+from .lambda_catalogs_get import LambdaCatalogsGet
 
 
 class CatalogStack(Stack):
@@ -38,6 +39,11 @@ class CatalogStack(Stack):
             catalog_table=table_stack.catalog_table,
         )
 
+        self.lambda_catalogs_get = LambdaCatalogsGet(
+            self,
+            catalog_table=table_stack.catalog_table,
+        )
+
         # apis
         self.catalog_api_gateway = CatalogApiGateway(
             self,
@@ -45,4 +51,5 @@ class CatalogStack(Stack):
             lambda_catalog_post=self.lambda_catalog_post,
             lambda_catalog_item_get=self.lambda_catalog_item_get,
             lambda_catalog_delete=self.lambda_catalog_delete,
+            lambda_catalogs_get=self.lambda_catalogs_get,
         )
