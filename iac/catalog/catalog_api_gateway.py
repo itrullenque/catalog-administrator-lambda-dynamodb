@@ -32,9 +32,9 @@ class CatalogApiGateway:
 
         aws_apigateway.Stage(
             self.stack,
-            id="catalog" + "_stage",
+            id="dev" + "_stage",
             deployment=rest_api.latest_deployment,
-            stage_name="catalog",
+            stage_name="dev",
         )
 
         # create the resources
