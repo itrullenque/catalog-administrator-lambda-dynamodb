@@ -25,12 +25,15 @@ def lambda_handler(event, context):
 
         catalog_id = query_params.get("catalog_id")
         course_id = query_params.get("course_id")
+        # set the academic year
+        academic_year = int(time.strftime("%Y"))
 
         # create the body
         catalog_item = {
             "catalog_id": catalog_id,
             "course_id": course_id,
             "creation_date": int(time.time()),
+            "academic_year": academic_year,
         }
 
         # save in dynamo
