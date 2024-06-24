@@ -1,58 +1,101 @@
+# Catalog API Documentation
 
-# Welcome to your CDK Python project!
+This document outlines the usage of the Catalog API endpoints.
 
-This is a blank project for CDK development with Python.
+## Base URL
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+https://[your-api-gateway-id].execute-api.[your-region].amazonaws.com/dev
 
-This project is set up like a standard Python project.  The initialization
-process also creates a virtualenv within this project, stored under the `.venv`
-directory.  To create the virtualenv it assumes that there is a `python3`
-(or `python` for Windows) executable in your path with access to the `venv`
-package. If for any reason the automatic creation of the virtualenv fails,
-you can create the virtualenv manually.
+## Endpoints
 
-To manually create a virtualenv on MacOS and Linux:
+### 1. Create a Catalog Item (POST /catalog)
 
-```
-$ python -m venv .venv
-```
+Creates a new catalog item.
 
-After the init process completes and the virtualenv is created, you can use the following
-step to activate your virtualenv.
+Query Parameters:
 
-```
-$ source .venv/bin/activate
-```
+- catalog_id (required): Unique identifier for the catalog
+- course_id (required): Identifier for the course
 
-If you are a Windows platform, you would activate the virtualenv like this:
+Example: POST /catalog?catalog_id=cat123&course_id=course456
 
-```
-% .venv\Scripts\activate.bat
-```
+Response:
 
-Once the virtualenv is activated, you can install the required dependencies.
+- 200 OK: Item created successfully
+- 400 Bad Request: Missing or incorrect parameters
+- 500 Internal Server Error: Server-side error
 
-```
-$ pip install -r requirements.txt
-```
+### 2. Get a Catalog Item (GET /catalog)
 
-At this point you can now synthesize the CloudFormation template for this code.
+Retrieves a specific catalog item.
 
-```
-$ cdk synth
-```
+Query Parameters:
 
-To add additional dependencies, for example other CDK libraries, just add
-them to your `setup.py` file and rerun the `pip install -r requirements.txt`
-command.
+- catalog_id (required): Unique identifier for the catalog
+- course_id (required): Identifier for the course
 
-## Useful commands
+Example: GET /catalog?catalog_id=cat123&course_id=course456
 
- * `cdk ls`          list all stacks in the app
- * `cdk synth`       emits the synthesized CloudFormation template
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk docs`        open CDK documentation
+Response:
 
-Enjoy!
+- 200 OK: Returns the catalog item
+- 400 Bad Request: Missing or incorrect parameters
+- 500 Internal Server Error: Server-side error
+
+### 3. Delete a Catalog Item (DELETE /catalog)
+
+Deletes a specific catalog item.
+
+Query Parameters:
+
+- catalog_id (required): Unique identifier for the catalog
+- course_id (required): Identifier for the course
+
+Example: DELETE /catalog?catalog_id=cat123&course_id=course456
+
+Response:
+
+- 200 OK: Item deleted successfully
+- 400 Bad Request: Missing or incorrect parameters
+- 500 Internal Server Error: Server-side error
+
+### 4. Query Catalog Items (GET /catalogquery)
+
+Queries catalog items based on academic year or course ID.
+
+Query Parameters (use one, not both):
+
+- academic_year: Filter by academic year
+- course_id: Filter by course ID
+
+Examples:
+
+- GET /catalogquery?academic_year=2023
+- GET /catalogquery?course_id=course456
+
+Response:
+
+- 200 OK: Returns matching catalog items
+- 400 Bad Request: Invalid or missing query parameters
+- 500 Internal Server Error: Server-side error
+
+### 5. Get All Catalog Items (GET /catalogs)
+
+Retrieves all catalog items.
+
+No query parameters accepted.
+
+Example: GET /catalogs
+
+Response:
+
+- 200 OK: Returns all catalog items
+- 400 Bad Request: If any query parameters are provided
+- 500 Internal Server Error: Server-side error
+
+## Notes
+
+- All responses are in JSON format.
+- The POST request automatically sets the academic year to the current year.
+- The API uses DynamoDB with Global Secondary Indexes for academic_year and course_id.
+- CORS is enabled for all endpoints.
