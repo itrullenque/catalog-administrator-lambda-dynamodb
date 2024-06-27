@@ -103,3 +103,17 @@ Response:
 - The POST request automatically sets the academic year to the current year.
 - The API uses DynamoDB with Global Secondary Indexes for academic_year and course_id.
 - CORS is enabled for all endpoints.
+
+## Deployment Instructions
+
+### Prerequisites
+
+- AWS CLI installed and configured
+- Node.js and npm installed
+- Python 3.x installed
+- Git
+
+### Steps to Deploy
+
+1. Clone the repository: https://github.com/itrullenque/catalog-administrator-lambda-dynamodb.git
+   cd catalog-administrator-lambda-dynamodb.
